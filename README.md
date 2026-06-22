@@ -23,6 +23,21 @@ python manage.py runserver
 
 Open <http://127.0.0.1:8000/>.
 
+## Database SQL Script
+
+Django migrations are the normal source of truth for the database schema. For reference or standalone Postgres demos, this repo also includes [database/init.sql](database/init.sql):
+
+```bash
+createdb django_crud
+psql -d django_crud -f database/init.sql
+```
+
+If you are running the Django app, prefer:
+
+```bash
+python manage.py migrate
+```
+
 For Tailwind work, keep the CSS compiler running in a second terminal:
 
 ```bash
