@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Avenir Next", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: Georgia, "Times New Roman", serif;
+  --font-sans: "Lato", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Montserrat", "Lato", ui-sans-serif, system-ui, sans-serif;
 
   --color-paper: #f5f8f1;
   --color-ink: #17211c;
@@ -28,5 +28,17 @@
       radial-gradient(circle at 18% 0%, rgba(15, 107, 94, 0.13), transparent 28rem),
       linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(232, 239, 231, 0.72)),
       var(--color-paper);
+  }
+}
+
+@layer components {
+  .htmx-indicator {
+    opacity: 0;
+    transition: opacity 150ms ease;
+  }
+
+  .htmx-request .htmx-indicator,
+  .htmx-request.htmx-indicator {
+    opacity: 1;
   }
 }
