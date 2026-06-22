@@ -1,0 +1,138 @@
+<main class="page">
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Angular frontend / Django API</p>
+      <h1>Tasks</h1>
+      <p class="lede">
+        Angular consumes the same Django JSON API with standalone components and template-driven forms.
+      </p>
+    </div>
+
+    <section class="count-panel" aria-label="Task counts">
+      <p class="count-label">Matching tasks</p>
+      <p class="count-total">{{ counts.total }}</p>
+      <div class="count-grid">
+        <div><span>{{ counts.todo }}</span>To do</div>
+        <div><span>{{ counts.in_progress }}</span>Doing</div>
+        <div><span>{{ counts.done }}</span>Done</div>
+      </div>
+    </section>
+  </header>
+
+  <section class="toolbar">
+    <input
+      aria-label="Search tasks"
+      class="search"
+      name="query"
+      placeholder="Search tasks"
+      [(ngModel)]="filters.q"
+      (ngModelChange)="loadTasks()"
+    />
+
+    <div class="filters" aria-label="Filter tasks by status">
+      <button [class.active]="!filters.status" type="button" (click)="setStatus('')">All</button>
+      @for (status of choices.statuses; track status.value) {
+        <button [class.active]="filters.status === status.value" type="button" (click)="setStatus(status.value)">
+          {{ status.label }}
+        </button>
+      }
+    </div>
+  </section>
+
+  <section class="workspace">
+    <form class="task-form" (ngSubmit)="submitTask()">
+      <p class="eyebrow">{{ editingId ? 'Edit through Angular' : 'Create through Angular' }}</p>
+      <h2>{{ editingId ? 'Edit task' : 'New task' }}</h2>
+
+      @for (error of fieldErrors('__all__'); track error) {
+        <p class="form-error">{{ error }}</p>
+      }
+
+      <label>
+        Title
+        <input class="field-control" name="title" required [(ngModel)]="draft.title" />
+        @for (error of fieldErrors('title'); track error) {
+          <span class="field-error">{{ error }}</span>
+        }
+      </label>
+
+      <label>
+        Description
+        <textarea class="field-control" name="description" rows="4" [(ngModel)]="draft.description"></textarea>
+        @for (error of fieldErrors('description'); track error) {
+          <span class="field-error">{{ error }}</span>
+        }
+      </label>
+
+      <label>
+        Status
+        <select class="field-control" name="status" [(ngModel)]="draft.status">
+          @for (status of choices.statuses; track status.value) {
+            <option [value]="status.value">{{ status.label }}</option>
+          }
+        </select>
+        @for (error of fieldErrors('status'); track error) {
+          <span class="field-error">{{ error }}</span>
+        }
+      </label>
+
+      <label>
+        Priority
+        <select class="field-control" name="priority" [(ngModel)]="draft.priority">
+          @for (priority of choices.priorities; track priority.value) {
+            <option [value]="priority.value">{{ priority.label }}</option>
+          }
+        </select>
+        @for (error of fieldErrors('priority'); track error) {
+          <span class="field-error">{{ error }}</span>
+        }
+      </label>
+
+      <label>
+        Due date
+        <input class="field-control" name="due_date" type="date" [(ngModel)]="draft.due_date" />
+        @for (error of fieldErrors('due_date'); track error) {
+          <span class="field-error">{{ error }}</span>
+        }
+      </label>
+
+      <div class="form-actions">
+        <button class="primary" type="submit">{{ editingId ? 'Save task' : 'Create task' }}</button>
+        @if (editingId) {
+          <button class="secondary" type="button" (click)="openCreate()">Cancel</button>
+        }
+      </div>
+    </form>
+
+    @if (loading) {
+      <section class="empty-state">Loading tasks...</section>
+    } @else if (tasks.length) {
+      <section class="task-grid" aria-label="Task list">
+        @for (task of tasks; track task.id) {
+          <article class="task-card">
+            <div class="task-card-top">
+              <span class="pill" [ngClass]="statusClass(task.status)">{{ task.status_label }}</span>
+              <span class="pill" [ngClass]="priorityClass(task.priority)">{{ task.priority_label }}</span>
+            </div>
+
+            <h2>{{ task.title }}</h2>
+            <p>{{ task.description || 'No description yet.' }}</p>
+
+            <div class="task-meta">
+              <span>{{ task.due_date ? 'Due ' + task.due_date : 'No due date' }}</span>
+              <div>
+                <button type="button" (click)="openEdit(task)">Edit</button>
+                <button class="danger-link" type="button" (click)="deleteTask(task)">Delete</button>
+              </div>
+            </div>
+          </article>
+        }
+      </section>
+    } @else {
+      <section class="empty-state">
+        <h2>No tasks found</h2>
+        <p>Adjust the filters or create a new task.</p>
+      </section>
+    }
+  </section>
+</main>
