@@ -8,7 +8,7 @@
   <section class="mb-8 grid gap-6 lg:grid-cols-[1fr_320px] lg:items-end">
     <div>
       <p class="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-forest-600">HTMX-enhanced CRUD</p>
-      <h1 class="font-serif text-5xl font-bold leading-none tracking-tight text-ink sm:text-6xl">Tasks</h1>
+      <h1 class="font-display text-5xl font-bold leading-none tracking-tight text-ink sm:text-6xl">Tasks</h1>
       <p class="mt-4 max-w-2xl text-lg leading-8 text-stone">Filter, search, create, edit, and delete without leaving the list.</p>
     </div>
     <div class="rounded-lg border border-mist bg-white/85 p-4 shadow-soft">
@@ -16,7 +16,7 @@
         <p class="text-sm font-bold text-stone">Matching tasks</p>
         <span id="dashboard-indicator" class="htmx-indicator text-xs font-extrabold uppercase tracking-[0.14em] text-forest-600">Updating</span>
       </div>
-      <p class="mt-1 font-serif text-5xl font-bold leading-none">{{ total_count }}</p>
+      <p class="mt-1 font-display text-5xl font-bold leading-none">{{ total_count }}</p>
       <div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs font-bold text-stone">
         <div class="rounded-lg bg-mist/80 px-2 py-2"><span class="block text-lg text-ink">{{ todo_count }}</span>To do</div>
         <div class="rounded-lg bg-gold-100 px-2 py-2"><span class="block text-lg text-gold-700">{{ in_progress_count }}</span>Doing</div>
@@ -91,7 +91,7 @@
     </section>
   {% else %}
     <section class="rounded-lg border border-dashed border-forest-100 bg-white/80 p-10 text-center shadow-soft">
-      <h2 class="font-serif text-3xl font-bold">No tasks found</h2>
+      <h2 class="font-display text-3xl font-bold">No tasks found</h2>
       <p class="mx-auto mt-3 max-w-md leading-7 text-stone">Adjust the filters or create a new task from this view.</p>
       <a
         class="mt-6 inline-flex items-center justify-center rounded-lg bg-forest-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-forest-700 focus:outline-none focus:ring-4 focus:ring-forest-100"

@@ -14,7 +14,7 @@
       <span class="rounded-full bg-paper px-3 py-1 text-xs font-extrabold text-stone">{{ task.get_priority_display }}</span>
     {% endif %}
   </div>
-  <h2 class="mt-5 font-serif text-2xl font-bold leading-tight text-ink">
+  <h2 class="mt-5 font-display text-2xl font-bold leading-tight text-ink">
     <a class="decoration-forest-100 decoration-4 underline-offset-4 transition hover:text-forest-700 hover:underline" href="{% url 'task-detail' task.pk %}">{{ task.title }}</a>
   </h2>
   {% if task.description %}

@@ -1,4 +1,4 @@
-# Django CRUD Learning App
+# Django CRUD Lab
 
 This is a small task tracker that demonstrates the normal Django CRUD path:
 

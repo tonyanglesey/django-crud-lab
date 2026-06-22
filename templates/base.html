@@ -5,13 +5,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Django CRUD{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
   <script src="{% static 'vendor/htmx.min.js' %}" defer></script>
 </head>
 <body class="min-h-full font-sans antialiased">
   <header class="border-b border-mist/90 bg-white/70 backdrop-blur">
     <nav class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8" aria-label="Main navigation">
-      <a class="font-serif text-xl font-bold tracking-tight text-forest-900 no-underline" href="{% url 'task-list' %}">Django CRUD</a>
+      <a class="font-display text-xl font-bold tracking-tight text-forest-900 no-underline" href="{% url 'task-list' %}">Django CRUD</a>
       <div class="flex items-center gap-3">
         <a class="text-sm font-semibold text-stone hover:text-forest-700" href="{% url 'task-list' %}">Tasks</a>
         <a class="rounded-lg bg-forest-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-forest-700 focus:outline-none focus:ring-4 focus:ring-forest-100" href="{% url 'task-create' %}">New task</a>
