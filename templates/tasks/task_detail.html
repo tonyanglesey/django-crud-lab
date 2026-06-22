@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}{{ task.title }} | Django CRUD{% endblock %}
+
+{% block content %}
+  <article class="rounded-lg border border-mist bg-white/90 p-6 shadow-soft sm:p-8">
+    <div class="flex flex-col gap-5 border-b border-mist pb-6 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <p class="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-forest-600">{{ task.get_status_display }} / {{ task.get_priority_display }} priority</p>
+        <h1 class="font-serif text-4xl font-bold leading-tight tracking-tight text-ink sm:text-5xl">{{ task.title }}</h1>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a class="inline-flex items-center justify-center rounded-lg bg-forest-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-forest-700 focus:outline-none focus:ring-4 focus:ring-forest-100" href="{% url 'task-update' task.pk %}">Edit</a>
+        <a class="inline-flex items-center justify-center rounded-lg bg-clay-700 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-clay-800 focus:outline-none focus:ring-4 focus:ring-clay-100" href="{% url 'task-delete' task.pk %}">Delete</a>
+      </div>
+    </div>
+
+    <dl class="mt-6 grid gap-5">
+      <div class="rounded-lg bg-paper/80 p-4">
+        <dt class="text-xs font-extrabold uppercase tracking-[0.12em] text-stone">Description</dt>
+        <dd class="mt-2 leading-7 text-ink">{{ task.description|default:"No description yet."|linebreaks }}</dd>
+      </div>
+      <div class="rounded-lg bg-paper/80 p-4">
+        <dt class="text-xs font-extrabold uppercase tracking-[0.12em] text-stone">Due date</dt>
+        <dd class="mt-2 text-ink">{{ task.due_date|default:"No due date" }}</dd>
+      </div>
+      <div class="rounded-lg bg-paper/80 p-4">
+        <dt class="text-xs font-extrabold uppercase tracking-[0.12em] text-stone">Last updated</dt>
+        <dd class="mt-2 text-ink">{{ task.updated_at }}</dd>
+      </div>
+    </dl>
+  </article>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Tasks | Django CRUD{% endblock %}
+
+{% block content %}
+  <section class="mb-8 grid gap-6 lg:grid-cols-[1fr_320px] lg:items-end">
+    <div>
+      <p class="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-forest-600">Simple CRUD app</p>
+      <h1 class="font-serif text-5xl font-bold leading-none tracking-tight text-ink sm:text-6xl">Tasks</h1>
+      <p class="mt-4 max-w-2xl text-lg leading-8 text-stone">Create, read, update, and delete records backed by Postgres.</p>
+    </div>
+    <div class="rounded-lg border border-mist bg-white/85 p-4 shadow-soft">
+      <p class="text-sm font-bold text-stone">Total tasks</p>
+      <p class="mt-1 font-serif text-5xl font-bold leading-none">{{ total_count }}</p>
+      <div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs font-bold text-stone">
+        <div class="rounded-lg bg-mist/80 px-2 py-2"><span class="block text-lg text-ink">{{ todo_count }}</span>To do</div>
+        <div class="rounded-lg bg-gold-100 px-2 py-2"><span class="block text-lg text-gold-700">{{ in_progress_count }}</span>Doing</div>
+        <div class="rounded-lg bg-forest-50 px-2 py-2"><span class="block text-lg text-forest-700">{{ done_count }}</span>Done</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mb-5 flex flex-col gap-3 border-y border-mist py-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex flex-wrap gap-2" aria-label="Filter tasks by status">
+      <a class="rounded-lg px-4 py-2 text-sm font-bold transition {% if not current_status %}bg-ink text-white{% else %}bg-white text-stone hover:bg-mist{% endif %}" href="{% url 'task-list' %}">All</a>
+      {% for value, label in status_choices %}
+        <a class="rounded-lg px-4 py-2 text-sm font-bold transition {% if current_status == value %}bg-ink text-white{% else %}bg-white text-stone hover:bg-mist{% endif %}" href="{% url 'task-list' %}?status={{ value }}">{{ label }}</a>
+      {% endfor %}
+    </div>
+    <a class="inline-flex items-center justify-center rounded-lg bg-forest-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-forest-700 focus:outline-none focus:ring-4 focus:ring-forest-100" href="{% url 'task-create' %}">Add task</a>
+  </section>
+
+  {% if tasks %}
+    <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Task list">
+      {% for task in tasks %}
+        <article class="flex min-h-64 flex-col rounded-lg border border-mist bg-white/90 p-5 shadow-soft transition hover:-translate-y-0.5 hover:border-forest-100">
+          <div class="flex items-center justify-between gap-3">
+            {% if task.status == "done" %}
+              <span class="rounded-full bg-forest-50 px-3 py-1 text-xs font-extrabold text-forest-700">{{ task.get_status_display }}</span>
+            {% elif task.status == "in_progress" %}
+              <span class="rounded-full bg-gold-100 px-3 py-1 text-xs font-extrabold text-gold-700">{{ task.get_status_display }}</span>
+            {% else %}
+              <span class="rounded-full bg-mist px-3 py-1 text-xs font-extrabold text-stone">{{ task.get_status_display }}</span>
+            {% endif %}
+
+            {% if task.priority == "high" %}
+              <span class="rounded-full bg-clay-100 px-3 py-1 text-xs font-extrabold text-clay-800">{{ task.get_priority_display }}</span>
+            {% else %}
+              <span class="rounded-full bg-paper px-3 py-1 text-xs font-extrabold text-stone">{{ task.get_priority_display }}</span>
+            {% endif %}
+          </div>
+          <h2 class="mt-5 font-serif text-2xl font-bold leading-tight text-ink">
+            <a class="decoration-forest-100 decoration-4 underline-offset-4 transition hover:text-forest-700 hover:underline" href="{% url 'task-detail' task.pk %}">{{ task.title }}</a>
+          </h2>
+          {% if task.description %}
+            <p class="mt-3 leading-7 text-stone">{{ task.description|truncatewords:22 }}</p>
+          {% else %}
+            <p class="mt-3 leading-7 text-stone">No description yet.</p>
+          {% endif %}
+          <div class="mt-auto flex items-center justify-between gap-4 border-t border-mist pt-4 text-sm font-semibold text-stone">
+            <span>{% if task.due_date %}Due {{ task.due_date }}{% else %}No due date{% endif %}</span>
+            <a class="text-forest-700 hover:text-forest-900" href="{% url 'task-update' task.pk %}">Edit</a>
+          </div>
+        </article>
+      {% endfor %}
+    </section>
+  {% else %}
+    <section class="rounded-lg border border-dashed border-forest-100 bg-white/80 p-10 text-center shadow-soft">
+      <h2 class="font-serif text-3xl font-bold">No tasks yet</h2>
+      <p class="mx-auto mt-3 max-w-md leading-7 text-stone">Add your first task to create a row in Postgres.</p>
+      <a class="mt-6 inline-flex items-center justify-center rounded-lg bg-forest-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-forest-700 focus:outline-none focus:ring-4 focus:ring-forest-100" href="{% url 'task-create' %}">Create task</a>
+    </section>
+  {% endif %}
+{% endblock %}

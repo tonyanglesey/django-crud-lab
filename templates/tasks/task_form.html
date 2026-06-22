@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{% if task %}Edit{% else %}New{% endif %} Task | Django CRUD{% endblock %}
+
+{% block content %}
+  <section class="max-w-3xl rounded-lg border border-mist bg-white/90 p-6 shadow-soft sm:p-8">
+    <p class="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-forest-600">{% if task %}Update record{% else %}Create record{% endif %}</p>
+    <h1 class="font-serif text-4xl font-bold leading-tight tracking-tight text-ink sm:text-5xl">{% if task %}Edit task{% else %}New task{% endif %}</h1>
+
+    <form method="post" class="mt-8 grid gap-5">
+      {% csrf_token %}
+      {% for field in form %}
+        <div>
+          <label class="text-sm font-extrabold text-ink" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+            <p class="mt-2 text-sm text-stone">{{ field.help_text }}</p>
+          {% endif %}
+          {% for error in field.errors %}
+            <p class="mt-2 text-sm font-semibold text-clay-800">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <div class="flex flex-wrap gap-3 pt-2">
+        <button class="inline-flex items-center justify-center rounded-lg bg-forest-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-forest-700 focus:outline-none focus:ring-4 focus:ring-forest-100" type="submit">Save task</button>
+        <a class="inline-flex items-center justify-center rounded-lg border border-mist bg-white px-5 py-3 text-sm font-bold text-ink transition hover:bg-paper focus:outline-none focus:ring-4 focus:ring-forest-100" href="{% url 'task-list' %}">Cancel</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

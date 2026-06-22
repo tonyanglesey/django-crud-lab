@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Delete {{ task.title }} | Django CRUD{% endblock %}
+
+{% block content %}
+  <section class="max-w-3xl rounded-lg border border-clay-100 bg-white/90 p-6 shadow-soft sm:p-8">
+    <p class="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-clay-700">Delete record</p>
+    <h1 class="font-serif text-4xl font-bold leading-tight tracking-tight text-ink sm:text-5xl">Delete "{{ task.title }}"?</h1>
+    <p class="mt-4 max-w-2xl leading-7 text-stone">This removes the task from Postgres. You cannot undo this from the app.</p>
+
+    <form method="post" class="mt-8 flex flex-wrap gap-3">
+      {% csrf_token %}
+      <button class="inline-flex items-center justify-center rounded-lg bg-clay-700 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-clay-800 focus:outline-none focus:ring-4 focus:ring-clay-100" type="submit">Delete task</button>
+      <a class="inline-flex items-center justify-center rounded-lg border border-mist bg-white px-5 py-3 text-sm font-bold text-ink transition hover:bg-paper focus:outline-none focus:ring-4 focus:ring-forest-100" href="{% url 'task-detail' task.pk %}">Cancel</a>
+    </form>
+  </section>
+{% endblock %}
