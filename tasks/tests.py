@@ -104,3 +104,65 @@ class TaskCrudTests(TestCase):
         trigger = json.loads(response.headers['HX-Trigger'])
         self.assertIn('taskListChanged', trigger)
         self.assertIn('closeModal', trigger)
+
+    def test_api_lists_tasks_with_counts_and_search(self):
+        Task.objects.create(title='Read SvelteKit docs', status=Task.Status.TODO)
+        Task.objects.create(title='Polish Django API', status=Task.Status.DONE)
+
+        response = self.client.get(
+            reverse('api-task-list'),
+            {'q': 'sveltekit'},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload['counts']['total'], 1)
+        self.assertEqual(payload['counts']['todo'], 1)
+        self.assertEqual(payload['tasks'][0]['title'], 'Read SvelteKit docs')
+
+    def test_api_creates_task_from_json(self):
+        response = self.client.post(
+            reverse('api-task-list'),
+            data=json.dumps(
+                {
+                    'title': 'Create from SvelteKit',
+                    'description': 'Server action posts JSON to Django',
+                    'status': Task.Status.TODO,
+                    'priority': Task.Priority.HIGH,
+                    'due_date': date.today().isoformat(),
+                }
+            ),
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Task.objects.count(), 1)
+        self.assertEqual(response.json()['task']['title'], 'Create from SvelteKit')
+
+    def test_api_updates_task_from_json(self):
+        task = Task.objects.create(title='Old title')
+
+        response = self.client.patch(
+            reverse('api-task-detail', args=[task.pk]),
+            data=json.dumps(
+                {
+                    'title': 'Updated through API',
+                    'status': Task.Status.IN_PROGRESS,
+                }
+            ),
+            content_type='application/json',
+        )
+
+        self.assertEqual(response.status_code, 200)
+        task.refresh_from_db()
+        self.assertEqual(task.title, 'Updated through API')
+        self.assertEqual(task.status, Task.Status.IN_PROGRESS)
+
+    def test_api_deletes_task(self):
+        task = Task.objects.create(title='Delete through API')
+
+        response = self.client.delete(reverse('api-task-detail', args=[task.pk]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {'deleted': True})
+        self.assertFalse(Task.objects.filter(pk=task.pk).exists())
