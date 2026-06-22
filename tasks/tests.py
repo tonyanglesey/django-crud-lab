@@ -1,4 +1,5 @@
 from datetime import date
+import json
 
 from django.test import TestCase
 from django.urls import reverse
@@ -55,3 +56,51 @@ class TaskCrudTests(TestCase):
 
         self.assertRedirects(response, reverse('task-list'))
         self.assertFalse(Task.objects.filter(pk=task.pk).exists())
+
+    def test_htmx_task_list_returns_dashboard_partial(self):
+        Task.objects.create(title='Searchable HTMX task')
+
+        response = self.client.get(
+            reverse('task-list'),
+            {'q': 'htmx'},
+            HTTP_HX_REQUEST='true',
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'tasks/partials/_task_dashboard.html')
+        self.assertContains(response, 'id="task-dashboard"')
+        self.assertContains(response, 'Searchable HTMX task')
+        self.assertNotContains(response, '<!doctype html>')
+
+    def test_htmx_create_returns_refresh_trigger(self):
+        response = self.client.post(
+            reverse('task-create'),
+            {
+                'title': 'Create through HTMX',
+                'description': '',
+                'status': Task.Status.TODO,
+                'priority': Task.Priority.MEDIUM,
+                'due_date': '',
+            },
+            HTTP_HX_REQUEST='true',
+        )
+
+        self.assertEqual(response.status_code, 204)
+        self.assertEqual(Task.objects.count(), 1)
+        trigger = json.loads(response.headers['HX-Trigger'])
+        self.assertIn('taskListChanged', trigger)
+        self.assertIn('closeModal', trigger)
+
+    def test_htmx_delete_returns_refresh_trigger(self):
+        task = Task.objects.create(title='Delete through HTMX')
+
+        response = self.client.post(
+            reverse('task-delete', args=[task.pk]),
+            HTTP_HX_REQUEST='true',
+        )
+
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Task.objects.filter(pk=task.pk).exists())
+        trigger = json.loads(response.headers['HX-Trigger'])
+        self.assertIn('taskListChanged', trigger)
+        self.assertIn('closeModal', trigger)

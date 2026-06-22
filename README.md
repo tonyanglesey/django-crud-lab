@@ -7,13 +7,14 @@ This is a small task tracker that demonstrates the normal Django CRUD path:
 - `tasks/views.py` contains class-based create/read/update/delete views.
 - `tasks/urls.py` maps browser URLs to views.
 - `templates/tasks/` renders the pages.
+- HTMX enhances the list page with partial swaps and modal forms while the regular URLs still work.
 
 ## Local Setup
 
 ```bash
 source .venv/bin/activate
 npm install
-npm run build:css
+npm run build
 createdb django_crud
 python manage.py migrate
 python manage.py runserver

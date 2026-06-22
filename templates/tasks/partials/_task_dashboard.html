@@ -1,0 +1,105 @@
+<section
+  id="task-dashboard"
+  hx-get="{{ dashboard_url }}"
+  hx-trigger="taskListChanged from:body"
+  hx-target="this"
+  hx-swap="outerHTML"
+>
+  <section class="mb-8 grid gap-6 lg:grid-cols-[1fr_320px] lg:items-end">
+    <div>
+      <p class="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-forest-600">HTMX-enhanced CRUD</p>
+      <h1 class="font-serif text-5xl font-bold leading-none tracking-tight text-ink sm:text-6xl">Tasks</h1>
+      <p class="mt-4 max-w-2xl text-lg leading-8 text-stone">Filter, search, create, edit, and delete without leaving the list.</p>
+    </div>
+    <div class="rounded-lg border border-mist bg-white/85 p-4 shadow-soft">
+      <div class="flex items-center justify-between gap-3">
+        <p class="text-sm font-bold text-stone">Matching tasks</p>
+        <span id="dashboard-indicator" class="htmx-indicator text-xs font-extrabold uppercase tracking-[0.14em] text-forest-600">Updating</span>
+      </div>
+      <p class="mt-1 font-serif text-5xl font-bold leading-none">{{ total_count }}</p>
+      <div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs font-bold text-stone">
+        <div class="rounded-lg bg-mist/80 px-2 py-2"><span class="block text-lg text-ink">{{ todo_count }}</span>To do</div>
+        <div class="rounded-lg bg-gold-100 px-2 py-2"><span class="block text-lg text-gold-700">{{ in_progress_count }}</span>Doing</div>
+        <div class="rounded-lg bg-forest-50 px-2 py-2"><span class="block text-lg text-forest-700">{{ done_count }}</span>Done</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mb-5 grid gap-3 border-y border-mist py-4 lg:grid-cols-[1fr_auto] lg:items-center">
+    <form
+      class="flex flex-col gap-3 sm:flex-row sm:items-center"
+      method="get"
+      action="{% url 'task-list' %}"
+      hx-get="{% url 'task-list' %}"
+      hx-trigger="input changed delay:300ms from:#task-search, submit"
+      hx-target="#task-dashboard"
+      hx-swap="outerHTML"
+      hx-push-url="true"
+      hx-indicator="#dashboard-indicator"
+    >
+      {% if current_status %}
+        <input type="hidden" name="status" value="{{ current_status }}">
+      {% endif %}
+      <label class="sr-only" for="task-search">Search tasks</label>
+      <input
+        id="task-search"
+        class="w-full rounded-lg border border-mist bg-white px-4 py-2.5 text-sm text-ink shadow-sm outline-none transition placeholder:text-stone/70 focus:border-forest-600 focus:ring-4 focus:ring-forest-100 sm:w-80"
+        type="search"
+        name="q"
+        value="{{ current_query }}"
+        placeholder="Search tasks"
+      >
+      <button class="rounded-lg border border-mist bg-white px-4 py-2.5 text-sm font-bold text-ink transition hover:bg-paper focus:outline-none focus:ring-4 focus:ring-forest-100" type="submit">Search</button>
+    </form>
+
+    <div class="flex flex-wrap gap-2 lg:justify-end" aria-label="Filter tasks by status">
+      <a
+        class="rounded-lg px-4 py-2 text-sm font-bold transition {% if not current_status %}bg-ink text-white{% else %}bg-white text-stone hover:bg-mist{% endif %}"
+        href="{{ all_filter_url }}"
+        hx-get="{{ all_filter_url }}"
+        hx-target="#task-dashboard"
+        hx-swap="outerHTML"
+        hx-push-url="true"
+        hx-indicator="#dashboard-indicator"
+      >All</a>
+      {% for filter in status_filters %}
+        <a
+          class="rounded-lg px-4 py-2 text-sm font-bold transition {% if filter.active %}bg-ink text-white{% else %}bg-white text-stone hover:bg-mist{% endif %}"
+          href="{{ filter.url }}"
+          hx-get="{{ filter.url }}"
+          hx-target="#task-dashboard"
+          hx-swap="outerHTML"
+          hx-push-url="true"
+          hx-indicator="#dashboard-indicator"
+        >{{ filter.label }}</a>
+      {% endfor %}
+      <a
+        class="inline-flex items-center justify-center rounded-lg bg-forest-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-forest-700 focus:outline-none focus:ring-4 focus:ring-forest-100"
+        href="{% url 'task-create' %}"
+        hx-get="{% url 'task-create' %}"
+        hx-target="#modal-root"
+        hx-swap="innerHTML"
+      >Add task</a>
+    </div>
+  </section>
+
+  {% if tasks %}
+    <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Task list">
+      {% for task in tasks %}
+        {% include "tasks/partials/_task_card.html" %}
+      {% endfor %}
+    </section>
+  {% else %}
+    <section class="rounded-lg border border-dashed border-forest-100 bg-white/80 p-10 text-center shadow-soft">
+      <h2 class="font-serif text-3xl font-bold">No tasks found</h2>
+      <p class="mx-auto mt-3 max-w-md leading-7 text-stone">Adjust the filters or create a new task from this view.</p>
+      <a
+        class="mt-6 inline-flex items-center justify-center rounded-lg bg-forest-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-forest-700 focus:outline-none focus:ring-4 focus:ring-forest-100"
+        href="{% url 'task-create' %}"
+        hx-get="{% url 'task-create' %}"
+        hx-target="#modal-root"
+        hx-swap="innerHTML"
+      >Create task</a>
+    </section>
+  {% endif %}
+</section>

@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Django CRUD{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <script src="{% static 'vendor/htmx.min.js' %}" defer></script>
 </head>
 <body class="min-h-full font-sans antialiased">
   <header class="border-b border-mist/90 bg-white/70 backdrop-blur">
@@ -21,5 +22,26 @@
   <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
     {% block content %}{% endblock %}
   </main>
+
+  <div id="modal-root"></div>
+
+  <script>
+    function closeTaskModal() {
+      document.getElementById('modal-root').innerHTML = '';
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    document.body.addEventListener('closeModal', closeTaskModal);
+    document.body.addEventListener('htmx:afterSwap', function (event) {
+      if (event.detail.target.id === 'modal-root') {
+        document.body.classList.add('overflow-hidden');
+      }
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        closeTaskModal();
+      }
+    });
+  </script>
 </body>
 </html>
